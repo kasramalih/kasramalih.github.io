@@ -14,7 +14,7 @@
     <div id="biography" class="biography" hidden>
       <p>My research in Copenhagen included certified machine learning with prof. Amartya Sanyal and pixel language models with prof. Desmond Elliott.</p>
       <p>I’m interested in how much more we can learn from the data we have already seen via post-training. In particular, I want to understand how reinforcement learning and better reward models can improve reasoning. Can we go beyond pass@k for any arbitrary high k?</p>
-      <p>Before Copenhagen, I earned my BSc in Computer Engineering at Sharif University of Technology. I ranked <strong>6th internationally</strong> in the university entrance exam. Outside of research, I like reading about mathematical finance, playing chess <span aria-hidden="true">♟️</span>, and running/hiking <span aria-hidden="true">⛰️</span>.</p>
+      <p>Before Copenhagen, I earned my BSc in Computer Engineering at Sharif University of Technology. I ranked <strong>6th nationwide</strong> in the university entrance exam. Outside of research, I like reading about mathematical finance, playing chess <span aria-hidden="true">♟️</span>, and running/hiking <span aria-hidden="true">⛰️</span>.</p>
     </div>
   </div>
 </div>
