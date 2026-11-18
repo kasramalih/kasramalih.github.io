@@ -1,4 +1,4 @@
-## Teaching Assistant Experience
+<h2>Teaching Assistant Experience</h2>
 
 <div class="timeline">
   

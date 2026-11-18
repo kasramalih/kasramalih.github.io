@@ -51,26 +51,3 @@ document.querySelector('#about').addEventListener('click', (event) => {
   button.setAttribute('aria-expanded', String(!biography.hidden));
   button.lastElementChild.textContent = biography.hidden ? '+' : '−';
 });
-
-// The existing content files contain Markdown headings and HTML fragments.
-async function loadSection(section) {
-  try {
-    const response = await fetch(section.dataset.source, { cache: 'no-cache' });
-    if (!response.ok) throw new Error('Content unavailable');
-    const source = await response.text();
-    section.innerHTML = source.replace(/^#{1,2} (.+)$/gm, '<h2>$1</h2>');
-  } catch {
-    const message = document.createElement('p');
-    message.textContent = 'This section could not be loaded. ';
-    const retry = document.createElement('button');
-    retry.textContent = 'Try again';
-    retry.addEventListener('click', () => loadSection(section));
-    message.append(retry);
-    section.replaceChildren(message);
-  }
-}
-
-Promise.all(Array.from(document.querySelectorAll('[data-source]'), loadSection)).then(() => {
-  // Restore direct section links once all preceding sections have their full height.
-  if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
-});

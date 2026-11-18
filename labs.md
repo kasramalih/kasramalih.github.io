@@ -1,4 +1,4 @@
-## Labs
+<h2>Labs</h2>
 
 <ul class="lab-list">
   <li>

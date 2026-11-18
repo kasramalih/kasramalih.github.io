@@ -1,5 +1,9 @@
 # kasramalih.github.io
 
+GitHub Pages builds the homepage with Jekyll. Edit the section files listed in
+`index.html` to update its content. To preview it locally with Jekyll installed,
+run `jekyll serve` from the repository root.
+
 ## Updating the CV
 
 Edit the CV in its private Overleaf project. The `Sync CV from Overleaf`

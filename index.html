@@ -1,3 +1,6 @@
+---
+layout: none
+---
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,6 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kasra Malihi — Machine Learning &amp; Language Technologies</title>
   <meta name="description" content="Kasra Malihi studies uncertainty-aware reinforcement learning for language model post-training at ETH Zurich’s Learning and Adaptive Systems Group.">
+  <meta name="google-site-verification" content="7FQjr27RQwXDRORqiBadvxSGKwWa3wpsVXtTGDoR7wU">
+  <link rel="canonical" href="https://kasramalih.github.io/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Kasra Malihi">
   <meta property="og:url" content="https://kasramalih.github.io/">
@@ -21,7 +26,8 @@
       if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
     } catch {}
   </script>
-  <script src="script.js?v=3" defer></script>
+  <noscript><style>#biography[hidden] { display: block !important; } .bio-toggle, .theme-toggle, .menu-toggle { display: none; }</style></noscript>
+  <script src="script.js?v=4" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -49,13 +55,24 @@
     </div>
   </header>
   <main class="shell" id="main">
-    <noscript><p>Kasra Malihi studies uncertainty-aware reinforcement learning for language model post-training at ETH Zurich’s Learning and Adaptive Systems Group. Read his <a href="https://arxiv.org/pdf/2610.29681">latest paper</a> or <a href="assets/Kasra_Malihi_CV.pdf">CV</a>.</p></noscript>
-    <section id="about" aria-label="About Kasra Malihi" data-source="about.md"></section>
-    <section class="section labs" id="labs" aria-label="Labs" data-source="labs.md"></section>
-    <section class="section research" id="publications" aria-label="Research" data-source="publications.md"></section>
-    <section class="section secondary-section" id="resume" aria-label="Résumé" data-source="resume.md"></section>
-    <section class="section secondary-section" id="coursework" aria-label="Coursework" data-source="coursework.md"></section>
-    <section class="section secondary-section" id="teaching" aria-label="Teaching" data-source="teaching.md"></section>
+    <section id="about" aria-label="About Kasra Malihi">
+      {% include_relative about.md %}
+    </section>
+    <section class="section labs" id="labs" aria-label="Labs">
+      {% include_relative labs.md %}
+    </section>
+    <section class="section research" id="publications" aria-label="Research">
+      {% include_relative publications.md %}
+    </section>
+    <section class="section secondary-section" id="resume" aria-label="Résumé">
+      {% include_relative resume.md %}
+    </section>
+    <section class="section secondary-section" id="coursework" aria-label="Coursework">
+      {% include_relative coursework.md %}
+    </section>
+    <section class="section secondary-section" id="teaching" aria-label="Teaching">
+      {% include_relative teaching.md %}
+    </section>
   </main>
   <footer class="shell site-footer">
     <span>Kasra Malihi</span>

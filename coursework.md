@@ -1,4 +1,4 @@
-## Selected Coursework
+<h2>Selected Coursework</h2>
 
 <div class="course-group">
     <div class="course-institution">ETH Zurich</div>

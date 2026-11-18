@@ -1,4 +1,4 @@
-## Research
+<h2>Research</h2>
 
 <article class="paper">
   <a class="paper-thumbnail" href="assets/mpixel-figure-1.png" aria-label="View Figure 1 at full size">
