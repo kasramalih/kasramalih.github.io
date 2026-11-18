@@ -1,0 +1,104 @@
+name: Sync CV from Overleaf
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-cv.yml'
+      - '.github/scripts/build-cv.sh'
+
+concurrency:
+  group: sync-overleaf-cv
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        shell: bash
+    env:
+      CV_PATH: assets/Kasra_Malihi_CV.pdf
+      MAIN_FILE: ${{ vars.OVERLEAF_MAIN_FILE }}
+      ENGINE: ${{ vars.OVERLEAF_ENGINE || 'pdflatex' }}
+      # TeX Live 2026, linux/amd64. Keep the build independent of moving tags.
+      TEX_IMAGE: texlive/texlive@sha256:62f25f2702cd64858bdce45d7344e2d69379e91405bbd414524cf6619f4277b8
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Fetch private CV
+        env:
+          PROJECT_ID: ${{ secrets.OVERLEAF_PROJECT_ID }}
+          OVERLEAF_GIT_TOKEN: ${{ secrets.OVERLEAF_GIT_TOKEN }}
+          GIT_TERMINAL_PROMPT: '0'
+        run: |
+          if [[ ! "$PROJECT_ID" =~ ^[0-9a-fA-F]{24}$ || -z "$OVERLEAF_GIT_TOKEN" ]]; then
+            echo "::error::Set OVERLEAF_PROJECT_ID to the 24-character project ID and OVERLEAF_GIT_TOKEN to the Git token."
+            exit 1
+          fi
+          # Supply credentials only to this Git operation. The remote URL contains no password.
+          if ! git -c credential.helper= -c http.followRedirects=false \
+            -c 'credential.helper=!f() { if test "$1" = get; then printf "username=git\npassword=%s\n" "$OVERLEAF_GIT_TOKEN"; fi; }; f' \
+            clone --bare --quiet "https://git@git.overleaf.com/$PROJECT_ID" "$RUNNER_TEMP/cv.git" >/dev/null 2>&1; then
+            echo "::error::Overleaf Git access failed. Check the project ID, token, and Git integration access."
+            exit 1
+          fi
+
+      - name: Check for source or compiler changes
+        id: revision
+        run: |
+          tree=$(git --git-dir="$RUNNER_TEMP/cv.git" rev-parse 'HEAD^{tree}')
+          key=$(printf '%s\n' "$tree" "$MAIN_FILE" "$ENGINE" "$TEX_IMAGE" "$(git hash-object .github/scripts/build-cv.sh)" | sha256sum | cut -d' ' -f1)
+          message="Update CV PDF ($key)"
+          echo "message=$message" >> "$GITHUB_OUTPUT"
+          if [[ "$(git log -1 --format=%s -- "$CV_PATH")" != "$message" ]]; then
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compile and validate the PDF
+        if: steps.revision.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        run: bash .github/scripts/build-cv.sh
+
+      - name: Publish the PDF
+        if: steps.revision.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        env:
+          COMMIT_MESSAGE: ${{ steps.revision.outputs.message }}
+        run: |
+          install -m 0644 "$RUNNER_TEMP/cv-output/portfolio-cv.pdf" "$CV_PATH"
+          git add -- "$CV_PATH"
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit --quiet -m "$COMMIT_MESSAGE" -- "$CV_PATH"
+            git push origin HEAD:main
+          fi
+
+      - name: Verify the PDF served by Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://kasramalih.github.io/$CV_PATH"
+          matches_site() {
+            curl -fsSL --max-time 20 "$url?sync=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$1" -o "$RUNNER_TEMP/served.pdf" &&
+              cmp -s "$CV_PATH" "$RUNNER_TEMP/served.pdf"
+          }
+          if matches_site 0; then exit 0; fi
+          # A push with GITHUB_TOKEN does not automatically build branch-based Pages.
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent
+          for attempt in {1..20}; do
+            sleep 15
+            if matches_site "$attempt"; then exit 0; fi
+          done
+          echo "::error::The PDF is in the repository, but Pages has not served the new version yet."
+          exit 1
