@@ -3,18 +3,17 @@
 <div class="course-group">
     <div class="course-institution">ETH Zurich</div>
     <div class="course-list">
-        <!-- <div class="course-item">
-            <span class="course-name">Advanced Machine Learning</span>
-            <span class="course-desc">Focus on statistical learning theory, kernel methods, and deep learning architectures.</span>
-        </div> -->
         <div class="course-item">
             <span class="course-name">Probabilistic Artificial Intelligence</span>
         </div>
         <div class="course-item">
-            <span class="course-name">Guarantees for Machine Learning</span>
+            <span class="course-name">Large-Scale AI Engineering</span>
         </div>
         <div class="course-item">
-            <span class="course-name">Computer Vision</span>
+            <span class="course-name">Causality</span>
+        </div>
+        <div class="course-item">
+            <span class="course-name">Planning and Decision Making for Autonomous Robots</span>
         </div>
     </div>
 </div>
